@@ -54,8 +54,11 @@ if [[ -r "$HOME/.machinerc" && "${DOTZSH_NO_MACHINERC:-0}" != 1 ]]; then
   unfunction compinit bashcompinit complete 2>/dev/null
 fi
 
-if [[ ! -e "$HOME/tmp" && ! -L "$HOME/tmp" ]]; then
+if [[ ! -e "/tmp/personal-${UID}"  ]]; then
   command install -d -m 700 "/tmp/personal-${UID}"
+fi
+
+if [[ ! -e "$HOME/tmp" && ! -L "$HOME/tmp" ]]; then
   command ln -s "/tmp/personal-${UID}" "$HOME/tmp"
 fi
 
