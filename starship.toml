@@ -1,0 +1,117 @@
+# dotzsh/starship.toml
+#
+# A deliberately restrained Starship prompt. It shows:
+#   - current directory
+#   - git branch + status
+#   - kubernetes context + namespace
+#   - command duration (only for slow commands)
+#   - non-zero exit code
+#   - a single prompt character
+#
+# Language runtime modules (node, python, rust, golang, ...) are DISABLED by
+# default to keep the prompt fast and legible. Enable individually if desired.
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$kubernetes\
+$cmd_duration\
+$line_break\
+$status\
+$character"""
+
+# Enter a new line before the prompt for breathing room.
+add_newline = true
+
+# --- prompt character -------------------------------------------------------
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol   = "[➜](bold red)"
+
+# --- directory --------------------------------------------------------------
+[directory]
+truncation_length = 3
+truncate_to_repo  = true
+style             = "bold cyan"
+read_only         = " 󰌾"
+read_only_style   = "red"
+format = "[$home_symbol$path]($style)[$read_only]($read_only_style) "
+
+# --- git --------------------------------------------------------------------
+[git_branch]
+symbol = " "
+style  = "bold purple"
+format = '[  \($branch\)]($style) '
+
+# [git_status]
+# style = "yellow"
+#
+[git_status]
+format = '([$conflicted$stashed$deleted$renamed$modified$staged$untracked$ahead_behind]($style) )'
+style = "bold yellow"
+conflicted = "[󰞇 ${count}](bold red) "
+stashed    = "[󰏗 ${count}](cyan) "
+deleted    = "[󰆴 ${count}](red) "
+renamed    = "[󰑕 ${count}](purple) "
+modified   = "[󰏫 ${count}](yellow) "
+staged     = "[󰐕 ${count}](green) "
+untracked  = "[󰋗 ${count}](bright-black) "
+
+ahead    = "[󰁝 ${count}](green) "
+behind   = "[󰁅 ${count}](red) "
+diverged = "[󰹹 ${ahead_count}/${behind_count}](yellow) "
+
+
+ # --- kubernetes -------------------------------------------------------------
+# Replaces kube_ps1. Shows context + namespace only (no cluster version noise).
+[kubernetes]
+disabled = false
+style    = "bold blue"
+format   = '[󱃾 $context( \($namespace\))]($style) '
+
+# Show context/namespace only when a kubeconfig is present and non-trivial.
+[kubernetes.context_aliases]
+# Strip long EKS/GKE prefixes if you want; examples:
+# ".*-prod-.*" = "prod"
+
+# --- command duration -------------------------------------------------------
+# Only surface durations that are actually noticeable.
+[cmd_duration]
+min_time = 2_000           # 2s
+format   = "took [$duration](yellow) "
+show_milliseconds = false
+
+# --- exit status ------------------------------------------------------------
+[status]
+disabled = false
+format   = "[exit $status](red) "
+recognize_signal_code = true
+
+# --- disabled modules (kept explicit so behaviour is obvious) ---------------
+# Enable any of these by setting disabled = false if you want them.
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[java]
+disabled = true
+[docker_context]
+disabled = true
+[package]
+disabled = true
+[hostname]
+disabled = true
+[username]
+disabled = true
+[battery]
+disabled = true
+[time]
+disabled = true
+
+# Timeout for commands that probe the filesystem/git, to keep the prompt snappy.
+command_timeout = 800
