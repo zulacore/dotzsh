@@ -14,13 +14,12 @@ unset file
 
 DOTZSH_MACHINE_FILE="${DOTZSH_MACHINE_FILE:-$HOME/.machine.zsh}"
 [[ -r "$DOTZSH_MACHINE_FILE" ]] && source "$DOTZSH_MACHINE_FILE"
-
 # Final key ownership. Tab stays native; fzf is only for Ctrl-T/Alt-C and Ctrl-R
 # when Atuin is not available.
 if [[ "${TERM:-}" != dumb ]]; then
   bindkey '^I' expand-or-complete
-  if (( ${+functions[_atuin_search]} )); then
-    bindkey '^R' _atuin_search
+  if (( ${+widgets[atuin-search]} )); then
+    bindkey '^R' atuin-search
     DOTZSH_CTRL_R_OWNER=atuin
   elif (( ${+functions[fzf-history-widget]} )); then
     bindkey '^R' fzf-history-widget
@@ -54,3 +53,4 @@ if [[ -z "${DOTZSH_QUIET:-}" && -z "${DOTZSH_LOADED_ONCE:-}" ]]; then
   print -P "%F{cyan}dotzsh%f loaded  (Tab: native, Ctrl-R: ${DOTZSH_CTRL_R_OWNER})"
   export DOTZSH_LOADED_ONCE=1
 fi
+
