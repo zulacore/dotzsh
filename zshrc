@@ -7,7 +7,7 @@ if [[ -z "${DOTZSH_ROOT:-}" ]]; then
 fi
 export DOTZSH_ROOT DOTZSH_ACTIVE=1
 
-for file in environment options completion history integrations aliases; do
+for file in environment options completion history integrations functions aliases; do
   source "$DOTZSH_ROOT/config/$file.zsh"
 done
 unset file

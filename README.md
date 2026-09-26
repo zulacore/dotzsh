@@ -84,6 +84,7 @@ config/options.zsh
 config/completion.zsh
 config/history.zsh
 config/integrations.zsh
+config/functions.zsh
 config/aliases.zsh
 ```
 

@@ -44,4 +44,7 @@ alias dz-reload='exec zsh'
 # Inspect the effective configuration.
 alias dz-features='zsh-features'
 
+# --- editor ----------------------------------------------------------------
+alias vim='nvim'
+
 # --- personal (add your own below this line) -------------------------------
