@@ -128,10 +128,4 @@ bindkey '^w' backward-kill-word
 bindkey '^a' beginning-of-line
 bindkey '^e' end-of-line
 
-# Pi
-export PATH="$HOME/.local/bin:$PATH"
 
-# Machine-specific overrides run last so they can override dotzsh defaults.
-DOTZSH_MACHINE_FILE="${DOTZSH_MACHINE_FILE:-$HOME/.machine.zsh}"
-[[ -r "$DOTZSH_MACHINE_FILE" ]] && source "$DOTZSH_MACHINE_FILE"
-unset DOTZSH_MACHINE_FILE
