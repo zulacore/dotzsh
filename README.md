@@ -12,15 +12,29 @@ brew install zsh starship atuin fzf zoxide direnv carapace zsh-autosuggestions z
 
 ## Activación
 
-Clona este repo y enlaza los archivos principales:
+Clona este repo donde prefieras. Mantén `~/.zshrc` como archivo local normal (no como enlace al repositorio): así los instaladores pueden añadir configuración sin modificar el repo.
 
 ```sh
-git clone <repo> ~/.dotzsh
-ln -s ~/.dotzsh/zshrc ~/.zshrc
-ln -s ~/.dotzsh/starship.toml ~/.config/starship.toml
+git clone <repo> ~/dotzsh
 ```
 
-Si ya tienes `~/.zshrc` o `~/.config/starship.toml`, haz copia antes y adapta los enlaces a tu caso.
+En `~/.zshrc`, define la ruta del repo y carga su configuración:
+
+```zsh
+export DOTZSH_ROOT="$HOME/dotzsh"
+source "$DOTZSH_ROOT/zshrc"
+```
+
+Cambia `DOTZSH_ROOT` si clonas el repo en otra ubicación. `zshrc` también puede descubrir su propio directorio cuando se carga directamente y `DOTZSH_ROOT` no está definido, pero el archivo local debe conocer la ruta para poder hacer el primer `source`.
+
+Si quieres que Starship use la configuración del repo, crea el enlace por separado:
+
+```sh
+mkdir -p ~/.config
+ln -s "$HOME/dotzsh/starship.toml" ~/.config/starship.toml
+```
+
+No enlaces `~/.zshrc` al repo. Si ya existe, conserva una copia antes de sustituirlo.
 
 ## Configuración por máquina
 
