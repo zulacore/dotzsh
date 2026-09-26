@@ -71,6 +71,10 @@ No lo añadas al repo.
 
 `Tab` usa completion nativo de Zsh.
 
+## Modo de edición
+
+El shell activa el modo vi (`bindkey -v`): usa `Esc` para pasar al modo comando y `i` para volver al modo inserción. En modo comando, `v` abre la línea actual en Neovim (`edit-command-line`) con sintaxis Zsh. `KEYTIMEOUT=1` reduce la espera al pulsar `Esc`.
+
 ## Archivos principales
 
 ```text

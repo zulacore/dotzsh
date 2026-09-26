@@ -12,8 +12,6 @@ for file in environment options completion history integrations aliases; do
 done
 unset file
 
-DOTZSH_MACHINE_FILE="${DOTZSH_MACHINE_FILE:-$HOME/.machine.zsh}"
-[[ -r "$DOTZSH_MACHINE_FILE" ]] && source "$DOTZSH_MACHINE_FILE"
 # Final key ownership. Tab stays native; fzf is only for Ctrl-T/Alt-C and Ctrl-R
 # when Atuin is not available.
 if [[ "${TERM:-}" != dumb ]]; then
@@ -54,3 +52,26 @@ if [[ -z "${DOTZSH_QUIET:-}" && -z "${DOTZSH_LOADED_ONCE:-}" ]]; then
   export DOTZSH_LOADED_ONCE=1
 fi
 
+# Activar modo vi
+bindkey -v
+
+# Reducir el retraso de Esc (muy recomendable en vi mode)
+export KEYTIMEOUT=1
+
+# Cargar la función edit-command-line y crear el widget
+autoload -Uz edit-command-line
+zle -N edit-command-line
+
+# Que Neovim abra el buffer con sintaxis de zsh
+zstyle :zle:edit-command-line editor nvim '+:set ft=zsh'
+
+# Mapear 'v' en modo comando (vicmd) para editar el comando
+bindkey -M vicmd 'v' edit-command-line
+
+# Pi
+export PATH="$HOME/.local/bin:$PATH"
+
+# Machine-specific overrides run last so they can override dotzsh defaults.
+DOTZSH_MACHINE_FILE="${DOTZSH_MACHINE_FILE:-$HOME/.machine.zsh}"
+[[ -r "$DOTZSH_MACHINE_FILE" ]] && source "$DOTZSH_MACHINE_FILE"
+unset DOTZSH_MACHINE_FILE
