@@ -52,21 +52,81 @@ if [[ -z "${DOTZSH_QUIET:-}" && -z "${DOTZSH_LOADED_ONCE:-}" ]]; then
   export DOTZSH_LOADED_ONCE=1
 fi
 
-# Activar modo vi
+# Enable vi mode and reduce the delay for recognizing Escape.
 bindkey -v
-
-# Reducir el retraso de Esc (muy recomendable en vi mode)
 export KEYTIMEOUT=1
 
-# Cargar la función edit-command-line y crear el widget
+# Load the edit-command-line function and define its widget.
 autoload -Uz edit-command-line
 zle -N edit-command-line
 
-# Que Neovim abra el buffer con sintaxis de zsh
+# Open the buffer in Neovim with Zsh syntax highlighting.
 zstyle :zle:edit-command-line editor nvim '+:set ft=zsh'
 
-# Mapear 'v' en modo comando (vicmd) para editar el comando
+# Map 'v' in command mode (vicmd) to edit the command line.
 bindkey -M vicmd 'v' edit-command-line
+
+# Control how the cursor appears in the various vi modes. This only applies
+# if $VI_MODE_SET_CURSOR=true.
+#
+# See https://vt100.net/docs/vt510-rm/DECSCUSR for cursor styles.
+typeset -g VI_MODE_CURSOR_NORMAL=${VI_MODE_CURSOR_NORMAL:=2}
+typeset -g VI_MODE_CURSOR_VISUAL=${VI_MODE_CURSOR_VISUAL:=6}
+typeset -g VI_MODE_CURSOR_INSERT=${VI_MODE_CURSOR_INSERT:=6}
+typeset -g VI_MODE_CURSOR_OPPEND=${VI_MODE_CURSOR_OPPEND:=0}
+typeset -g VI_KEYMAP=${VI_KEYMAP:=main}
+
+function _vi-mode-set-cursor-shape-for-keymap() {
+  [[ "$VI_MODE_SET_CURSOR" = true ]] || return 0
+
+  # https://vt100.net/docs/vt510-rm/DECSCUSR
+  local _shape=0
+  case "${1:-${VI_KEYMAP:-main}}" in
+    main)    _shape=$VI_MODE_CURSOR_INSERT ;; # vi insert: line
+    viins)   _shape=$VI_MODE_CURSOR_INSERT ;; # vi insert: line
+    isearch) _shape=$VI_MODE_CURSOR_INSERT ;; # inc search: line
+    command) _shape=$VI_MODE_CURSOR_INSERT ;; # read a command name
+    vicmd)   _shape=$VI_MODE_CURSOR_NORMAL ;; # vi cmd: block
+    visual)  _shape=$VI_MODE_CURSOR_VISUAL ;; # vi visual mode: block
+    viopp)   _shape=$VI_MODE_CURSOR_OPPEND ;; # vi operation pending: blinking block
+    *)       _shape=0 ;;
+  esac
+  printf $'\e[%d q' "${_shape}"
+}
+
+# Track keymap changes so the cursor reflects the active vi mode.
+function zle-keymap-select() {
+  typeset -g VI_KEYMAP=$KEYMAP
+  _vi-mode-set-cursor-shape-for-keymap "$VI_KEYMAP"
+}
+zle -N zle-keymap-select
+
+function zle-line-init() {
+  typeset -g VI_KEYMAP=main
+  (( ! ${+terminfo[smkx]} )) || echoti smkx
+  _vi-mode-set-cursor-shape-for-keymap "$VI_KEYMAP"
+}
+zle -N zle-line-init
+
+function zle-line-finish() {
+  typeset -g VI_KEYMAP=main
+  (( ! ${+terminfo[rmkx]} )) || echoti rmkx
+  _vi-mode-set-cursor-shape-for-keymap default
+}
+zle -N zle-line-finish
+
+# Allow Ctrl-P and Ctrl-N to navigate history in vi mode.
+bindkey '^P' up-history
+bindkey '^N' down-history
+
+# Allow Ctrl-H, Ctrl-W, and Ctrl-? to delete characters and words.
+bindkey '^?' backward-delete-char
+bindkey '^h' backward-delete-char
+bindkey '^w' backward-kill-word
+
+# Allow Ctrl-A and Ctrl-E to move to the start and end of the line.
+bindkey '^a' beginning-of-line
+bindkey '^e' end-of-line
 
 # Pi
 export PATH="$HOME/.local/bin:$PATH"
