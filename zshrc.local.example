@@ -1,0 +1,9 @@
+# Local Zsh entry point. Copy this file to ~/.zshrc and edit DOTZSH_ROOT
+# if the dotzsh repository is not located at ~/dotzsh.
+export DOTZSH_ROOT="$HOME/dotzsh"
+
+if [[ -r "$DOTZSH_ROOT/zshrc" ]]; then
+  source "$DOTZSH_ROOT/zshrc"
+else
+  print -u2 "dotzsh: cannot read $DOTZSH_ROOT/zshrc"
+fi

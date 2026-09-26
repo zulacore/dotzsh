@@ -18,14 +18,13 @@ Clona este repo donde prefieras. Mantén `~/.zshrc` como archivo local normal (n
 git clone <repo> ~/dotzsh
 ```
 
-En `~/.zshrc`, define la ruta del repo y carga su configuración:
+Copia el ejemplo a `~/.zshrc`:
 
-```zsh
-export DOTZSH_ROOT="$HOME/dotzsh"
-source "$DOTZSH_ROOT/zshrc"
+```sh
+cp ~/dotzsh/zshrc.local.example ~/.zshrc
 ```
 
-Cambia `DOTZSH_ROOT` si clonas el repo en otra ubicación. `zshrc` también puede descubrir su propio directorio cuando se carga directamente y `DOTZSH_ROOT` no está definido, pero el archivo local debe conocer la ruta para poder hacer el primer `source`.
+El ejemplo define `DOTZSH_ROOT="$HOME/dotzsh"` y carga la configuración desde allí. Si clonas el repo en otra ubicación, edita `~/.zshrc` y cambia esa asignación por la ruta correcta. El archivo local debe conocer la ubicación para poder hacer el primer `source`; el `zshrc` del repo también puede descubrir su propio directorio cuando se carga directamente y `DOTZSH_ROOT` no está definido.
 
 Si quieres que Starship use la configuración del repo, crea el enlace por separado:
 
